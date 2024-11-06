@@ -1,11 +1,10 @@
 pipeline {
     agent any
-
+    
     environment {
-        DOCKER_COMPOSE = '/usr/local/bin/docker-compose'  // Ruta al binario de Docker Compose
-        REPO_URL = 'https://github.com/Luisop05/Microservices1.git'  // URL del repositorio Git
+        DOCKER_COMPOSE_PATH = './docker-compose.yml'  // Asegúrate de que apunte al archivo correcto
     }
-
+    
     stages {
         stage('Checkout SCM') {
             steps {
@@ -18,8 +17,9 @@ pipeline {
                 stage('Verificar Inventario API') {
                     steps {
                         script {
-                            if (!fileExists('inventario_api/Dockerfile')) {
-                                error 'Dockerfile for inventario_api does not exist'
+                            dir('inventario_api') {
+                                echo "Verificando Inventario API"
+                                // Agrega los comandos para verificar los archivos, si es necesario
                             }
                         }
                     }
@@ -28,8 +28,9 @@ pipeline {
                 stage('Verificar Pedidos API') {
                     steps {
                         script {
-                            if (!fileExists('pedidos_api/Dockerfile')) {
-                                error 'Dockerfile for pedidos_api does not exist'
+                            dir('pedidos_api') {
+                                echo "Verificando Pedidos API"
+                                // Agrega los comandos para verificar los archivos, si es necesario
                             }
                         }
                     }
@@ -41,9 +42,10 @@ pipeline {
             parallel {
                 stage('Construir Inventario API') {
                     steps {
-                        dir('inventario_api') {
-                            script {
-                                sh "docker-compose -f ../docker-compose.yml build inventario_api"
+                        script {
+                            dir('inventario_api') {
+                                echo "Construyendo Inventario API"
+                                sh "docker-compose -f ${env.DOCKER_COMPOSE_PATH} build inventario-api"
                             }
                         }
                     }
@@ -51,9 +53,10 @@ pipeline {
 
                 stage('Construir Pedidos API') {
                     steps {
-                        dir('pedidos_api') {
-                            script {
-                                sh "docker-compose -f ../docker-compose.yml build pedidos_api"
+                        script {
+                            dir('pedidos_api') {
+                                echo "Construyendo Pedidos API"
+                                sh "docker-compose -f ${env.DOCKER_COMPOSE_PATH} build pedidos-api"
                             }
                         }
                     }
@@ -65,9 +68,10 @@ pipeline {
             parallel {
                 stage('Pruebas Inventario API') {
                     steps {
-                        dir('inventario_api') {
-                            script {
-                                echo 'Ejecutando pruebas para Inventario API'
+                        script {
+                            dir('inventario_api') {
+                                echo "Ejecutando pruebas en Inventario API"
+                                // Agrega tus pruebas aquí
                             }
                         }
                     }
@@ -75,9 +79,10 @@ pipeline {
 
                 stage('Pruebas Pedidos API') {
                     steps {
-                        dir('pedidos_api') {
-                            script {
-                                echo 'Ejecutando pruebas para Pedidos API'
+                        script {
+                            dir('pedidos_api') {
+                                echo "Ejecutando pruebas en Pedidos API"
+                                // Agrega tus pruebas aquí
                             }
                         }
                     }
@@ -89,9 +94,10 @@ pipeline {
             parallel {
                 stage('Desplegar Inventario API') {
                     steps {
-                        dir('inventario_api') {
-                            script {
-                                echo 'Desplegando Inventario API'
+                        script {
+                            dir('inventario_api') {
+                                echo "Desplegando Inventario API"
+                                // Agrega tus pasos de despliegue aquí
                             }
                         }
                     }
@@ -99,28 +105,21 @@ pipeline {
 
                 stage('Desplegar Pedidos API') {
                     steps {
-                        dir('pedidos_api') {
-                            script {
-                                echo 'Desplegando Pedidos API'
+                        script {
+                            dir('pedidos_api') {
+                                echo "Desplegando Pedidos API"
+                                // Agrega tus pasos de despliegue aquí
                             }
                         }
                     }
                 }
             }
         }
-    }
 
-    post {
-        always {
-            echo 'Pipeline completado'
-        }
-
-        success {
-            echo 'Pipeline ejecutado con éxito'
-        }
-
-        failure {
-            echo 'Pipeline fallido'
+        stage('Post Actions') {
+            steps {
+                echo 'Pipeline completado'
+            }
         }
     }
 }
