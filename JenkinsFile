@@ -19,7 +19,6 @@ pipeline {
                         script {
                             dir('inventario_api') {
                                 echo "Verificando Inventario API"
-                                // Agrega los comandos para verificar los archivos, si es necesario
                             }
                         }
                     }
@@ -30,7 +29,6 @@ pipeline {
                         script {
                             dir('pedidos_api') {
                                 echo "Verificando Pedidos API"
-                                // Agrega los comandos para verificar los archivos, si es necesario
                             }
                         }
                     }
@@ -43,10 +41,8 @@ pipeline {
                 stage('Construir Inventario API') {
                     steps {
                         script {
-                            dir('inventario_api') {
-                                echo "Construyendo Inventario API"
-                                sh "docker-compose -f ${env.DOCKER_COMPOSE_PATH} build inventario-api"
-                            }
+                            // Apunta al archivo docker-compose.yml en la raíz
+                            sh "docker-compose -f ${env.DOCKER_COMPOSE_PATH} build inventario-api"
                         }
                     }
                 }
@@ -54,10 +50,8 @@ pipeline {
                 stage('Construir Pedidos API') {
                     steps {
                         script {
-                            dir('pedidos_api') {
-                                echo "Construyendo Pedidos API"
-                                sh "docker-compose -f ${env.DOCKER_COMPOSE_PATH} build pedidos-api"
-                            }
+                            // Apunta al archivo docker-compose.yml en la raíz
+                            sh "docker-compose -f ${env.DOCKER_COMPOSE_PATH} build pedidos-api"
                         }
                     }
                 }
@@ -69,10 +63,7 @@ pipeline {
                 stage('Pruebas Inventario API') {
                     steps {
                         script {
-                            dir('inventario_api') {
-                                echo "Ejecutando pruebas en Inventario API"
-                                // Agrega tus pruebas aquí
-                            }
+                            echo "Ejecutando pruebas en Inventario API"
                         }
                     }
                 }
@@ -80,10 +71,7 @@ pipeline {
                 stage('Pruebas Pedidos API') {
                     steps {
                         script {
-                            dir('pedidos_api') {
-                                echo "Ejecutando pruebas en Pedidos API"
-                                // Agrega tus pruebas aquí
-                            }
+                            echo "Ejecutando pruebas en Pedidos API"
                         }
                     }
                 }
@@ -95,10 +83,7 @@ pipeline {
                 stage('Desplegar Inventario API') {
                     steps {
                         script {
-                            dir('inventario_api') {
-                                echo "Desplegando Inventario API"
-                                // Agrega tus pasos de despliegue aquí
-                            }
+                            echo "Desplegando Inventario API"
                         }
                     }
                 }
@@ -106,10 +91,7 @@ pipeline {
                 stage('Desplegar Pedidos API') {
                     steps {
                         script {
-                            dir('pedidos_api') {
-                                echo "Desplegando Pedidos API"
-                                // Agrega tus pasos de despliegue aquí
-                            }
+                            echo "Desplegando Pedidos API"
                         }
                     }
                 }
