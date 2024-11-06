@@ -1,16 +1,25 @@
 pipeline {
     agent any
+    
+    environment {
+        // Si tienes alguna variable de entorno global, la puedes definir aquí.
+    }
 
     stages {
+        stage('Declarative: Checkout SCM') {
+            steps {
+                checkout scm
+            }
+        }
+        
         stage('Verificar archivos') {
             parallel {
                 stage('Verificar Inventario API') {
                     steps {
                         dir('inventario_api') {
                             script {
-                                // Verifica si el archivo docker-compose.yml existe en la carpeta inventario_api
-                                if (!fileExists('docker-compose.yml')) {
-                                    error "El archivo docker-compose.yml no se encuentra en inventario_api"
+                                if (!fileExists('../docker-compose.yml')) {
+                                    error "docker-compose.yml no se encuentra en la raíz del repositorio."
                                 }
                             }
                         }
@@ -20,9 +29,8 @@ pipeline {
                     steps {
                         dir('pedidos_api') {
                             script {
-                                // Verifica si el archivo docker-compose.yml existe en la carpeta pedidos_api
-                                if (!fileExists('docker-compose.yml')) {
-                                    error "El archivo docker-compose.yml no se encuentra en pedidos_api"
+                                if (!fileExists('../docker-compose.yml')) {
+                                    error "docker-compose.yml no se encuentra en la raíz del repositorio."
                                 }
                             }
                         }
@@ -37,8 +45,8 @@ pipeline {
                     steps {
                         dir('inventario_api') {
                             script {
-                                // Construye el servicio de Inventario API usando docker-compose
-                                sh 'docker-compose -f docker-compose.yml build'
+                                // Aquí se ejecuta docker-compose desde la raíz, no dentro de 'inventario_api'
+                                sh 'docker-compose -f ../docker-compose.yml build inventario_api'
                             }
                         }
                     }
@@ -47,8 +55,8 @@ pipeline {
                     steps {
                         dir('pedidos_api') {
                             script {
-                                // Construye el servicio de Pedidos API usando docker-compose
-                                sh 'docker-compose -f docker-compose.yml build'
+                                // Aquí se ejecuta docker-compose desde la raíz, no dentro de 'pedidos_api'
+                                sh 'docker-compose -f ../docker-compose.yml build pedidos_api'
                             }
                         }
                     }
@@ -62,8 +70,8 @@ pipeline {
                     steps {
                         dir('inventario_api') {
                             script {
-                                // Aquí puedes agregar comandos para correr pruebas en Inventario API
-                                echo 'Ejecutando pruebas para Inventario API...'
+                                // Aquí puedes agregar las pruebas para inventario_api si es necesario
+                                sh 'pytest test_app.py'
                             }
                         }
                     }
@@ -72,8 +80,8 @@ pipeline {
                     steps {
                         dir('pedidos_api') {
                             script {
-                                // Aquí puedes agregar comandos para correr pruebas en Pedidos API
-                                echo 'Ejecutando pruebas para Pedidos API...'
+                                // Aquí puedes agregar las pruebas para pedidos_api si es necesario
+                                sh 'pytest test_app.py'
                             }
                         }
                     }
@@ -87,8 +95,8 @@ pipeline {
                     steps {
                         dir('inventario_api') {
                             script {
-                                // Aquí puedes agregar comandos para desplegar Inventario API
-                                echo 'Desplegando Inventario API...'
+                                // Aquí puedes agregar el comando de despliegue para inventario_api
+                                sh 'docker-compose -f ../docker-compose.yml up -d inventario_api'
                             }
                         }
                     }
@@ -97,11 +105,20 @@ pipeline {
                     steps {
                         dir('pedidos_api') {
                             script {
-                                // Aquí puedes agregar comandos para desplegar Pedidos API
-                                echo 'Desplegando Pedidos API...'
+                                // Aquí puedes agregar el comando de despliegue para pedidos_api
+                                sh 'docker-compose -f ../docker-compose.yml up -d pedidos_api'
                             }
                         }
                     }
+                }
+            }
+        }
+
+        stage('Declarative: Post Actions') {
+            steps {
+                echo 'Pipeline finalizado.'
+                script {
+                    // Aquí puedes agregar las acciones post-pipeline si las necesitas.
                 }
             }
         }
@@ -109,18 +126,14 @@ pipeline {
 
     post {
         always {
-            // Aquí puedes agregar acciones que siempre deben ejecutarse al final del pipeline
-            echo 'Pipeline finalizado.'
+            echo 'El pipeline ha terminado.'
         }
-
         success {
-            // Acciones a ejecutar en caso de éxito
-            echo 'Pipeline ejecutado correctamente.'
+            echo 'El pipeline ha sido exitoso.'
         }
-
         failure {
-            // Acciones a ejecutar en caso de falla
-            echo 'El pipeline falló.'
+            echo 'El pipeline ha fallado.'
         }
     }
 }
+
