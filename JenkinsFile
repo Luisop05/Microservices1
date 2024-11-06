@@ -2,15 +2,13 @@ pipeline {
     agent any
 
     environment {
-        // Definir variables de entorno
-        DOCKER_COMPOSE = '/usr/local/bin/docker-compose' // Ruta al binario de Docker Compose, ajusta según sea necesario
-        REPO_URL = 'https://github.com/Luisop05/Microservices1.git' // URL del repositorio Git
+        DOCKER_COMPOSE = '/usr/local/bin/docker-compose'  // Ruta al binario de Docker Compose
+        REPO_URL = 'https://github.com/Luisop05/Microservices1.git'  // URL del repositorio Git
     }
 
     stages {
         stage('Checkout SCM') {
             steps {
-                // Clonar el código desde el repositorio
                 checkout scm
             }
         }
@@ -20,7 +18,6 @@ pipeline {
                 stage('Verificar Inventario API') {
                     steps {
                         script {
-                            // Verificar si los archivos necesarios están presentes
                             if (!fileExists('inventario_api/Dockerfile')) {
                                 error 'Dockerfile for inventario_api does not exist'
                             }
@@ -31,7 +28,6 @@ pipeline {
                 stage('Verificar Pedidos API') {
                     steps {
                         script {
-                            // Verificar si los archivos necesarios están presentes
                             if (!fileExists('pedidos_api/Dockerfile')) {
                                 error 'Dockerfile for pedidos_api does not exist'
                             }
@@ -47,7 +43,6 @@ pipeline {
                     steps {
                         dir('inventario_api') {
                             script {
-                                // Construir la imagen para el servicio 'inventario_api'
                                 sh "docker-compose -f ../docker-compose.yml build inventario_api"
                             }
                         }
@@ -58,7 +53,6 @@ pipeline {
                     steps {
                         dir('pedidos_api') {
                             script {
-                                // Construir la imagen para el servicio 'pedidos_api'
                                 sh "docker-compose -f ../docker-compose.yml build pedidos_api"
                             }
                         }
@@ -73,7 +67,6 @@ pipeline {
                     steps {
                         dir('inventario_api') {
                             script {
-                                // Aquí puedes agregar los comandos para correr las pruebas de 'inventario_api'
                                 echo 'Ejecutando pruebas para Inventario API'
                             }
                         }
@@ -84,7 +77,6 @@ pipeline {
                     steps {
                         dir('pedidos_api') {
                             script {
-                                // Aquí puedes agregar los comandos para correr las pruebas de 'pedidos_api'
                                 echo 'Ejecutando pruebas para Pedidos API'
                             }
                         }
@@ -99,7 +91,6 @@ pipeline {
                     steps {
                         dir('inventario_api') {
                             script {
-                                // Desplegar 'inventario_api' (ajusta según tu entorno de despliegue)
                                 echo 'Desplegando Inventario API'
                             }
                         }
@@ -110,7 +101,6 @@ pipeline {
                     steps {
                         dir('pedidos_api') {
                             script {
-                                // Desplegar 'pedidos_api' (ajusta según tu entorno de despliegue)
                                 echo 'Desplegando Pedidos API'
                             }
                         }
@@ -118,22 +108,18 @@ pipeline {
                 }
             }
         }
-
     }
 
     post {
         always {
-            // Limpiar recursos, detener contenedores, etc.
             echo 'Pipeline completado'
         }
 
         success {
-            // Acciones en caso de éxito
             echo 'Pipeline ejecutado con éxito'
         }
 
         failure {
-            // Acciones en caso de fallo
             echo 'Pipeline fallido'
         }
     }
