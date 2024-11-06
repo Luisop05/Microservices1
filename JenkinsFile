@@ -63,4 +63,8 @@ pipeline {
     post {
         always {
             script {
-                junit '**/results/*.xml' // Asegúrate de que esta ruta es cor
+                junit '**/results/*.xml' // Asegúrate de que esta ruta es correcta.
+            }
+        }
+    }
+}
