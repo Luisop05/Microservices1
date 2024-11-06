@@ -2,11 +2,33 @@ pipeline {
     agent any
 
     stages {
+        stage('Verificar archivos') {
+            parallel {
+                stage('Verificar Inventario API') {
+                    steps {
+                        dir('inventario_api') {
+                            // Comando para listar archivos en la carpeta 'inventario_api'
+                            sh 'ls -la'
+                        }
+                    }
+                }
+                stage('Verificar Pedidos API') {
+                    steps {
+                        dir('pedidos_api') {
+                            // Comando para listar archivos en la carpeta 'pedidos_api'
+                            sh 'ls -la'
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Construcción') {
             parallel {
                 stage('Construir Inventario API') {
                     steps {
                         dir('inventario_api') {
+                            // Construye la imagen Docker
                             sh 'docker-compose -f docker-compose.yml build'
                         }
                     }
@@ -14,6 +36,7 @@ pipeline {
                 stage('Construir Pedidos API') {
                     steps {
                         dir('pedidos_api') {
+                            // Construye la imagen Docker
                             sh 'docker-compose -f docker-compose.yml build'
                         }
                     }
@@ -26,6 +49,7 @@ pipeline {
                 stage('Pruebas Inventario API') {
                     steps {
                         dir('inventario_api') {
+                            // Ejecuta pruebas con pytest
                             sh 'pytest test_app.py'
                         }
                     }
@@ -33,6 +57,7 @@ pipeline {
                 stage('Pruebas Pedidos API') {
                     steps {
                         dir('pedidos_api') {
+                            // Ejecuta pruebas con pytest
                             sh 'pytest test_app.py'
                         }
                     }
@@ -45,6 +70,7 @@ pipeline {
                 stage('Desplegar Inventario API') {
                     steps {
                         dir('inventario_api') {
+                            // Levanta los servicios en modo detached
                             sh 'docker-compose -f docker-compose.yml up -d'
                         }
                     }
@@ -52,6 +78,7 @@ pipeline {
                 stage('Desplegar Pedidos API') {
                     steps {
                         dir('pedidos_api') {
+                            // Levanta los servicios en modo detached
                             sh 'docker-compose -f docker-compose.yml up -d'
                         }
                     }
@@ -63,7 +90,8 @@ pipeline {
     post {
         always {
             script {
-                junit '**/results/*.xml' // Asegúrate de que esta ruta es correcta.
+                // Publica los resultados de las pruebas, ajusta la ruta si es necesario
+                junit '**/results/*.xml'
             }
         }
     }
