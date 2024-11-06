@@ -7,14 +7,14 @@ pipeline {
                 stage('Construir Inventario API') {
                     steps {
                         dir('inventario_api') {
-                            bat 'docker-compose -f docker-compose.yml build'
+                            sh 'docker-compose -f docker-compose.yml build'
                         }
                     }
                 }
                 stage('Construir Pedidos API') {
                     steps {
                         dir('pedidos_api') {
-                            bat 'docker-compose -f docker-compose.yml build'
+                            sh 'docker-compose -f docker-compose.yml build'
                         }
                     }
                 }
@@ -26,14 +26,14 @@ pipeline {
                 stage('Pruebas Inventario API') {
                     steps {
                         dir('inventario_api') {
-                            bat 'pytest test_app.py'
+                            sh 'pytest test_app.py'
                         }
                     }
                 }
                 stage('Pruebas Pedidos API') {
                     steps {
                         dir('pedidos_api') {
-                            bat 'pytest test_app.py'
+                            sh 'pytest test_app.py'
                         }
                     }
                 }
@@ -45,14 +45,14 @@ pipeline {
                 stage('Desplegar Inventario API') {
                     steps {
                         dir('inventario_api') {
-                            bat 'docker-compose -f docker-compose.yml up -d'
+                            sh 'docker-compose -f docker-compose.yml up -d'
                         }
                     }
                 }
                 stage('Desplegar Pedidos API') {
                     steps {
                         dir('pedidos_api') {
-                            bat 'docker-compose -f docker-compose.yml up -d'
+                            sh 'docker-compose -f docker-compose.yml up -d'
                         }
                     }
                 }
@@ -63,8 +63,4 @@ pipeline {
     post {
         always {
             script {
-                junit '**/results/*.xml' // Asegúrate de que esta ruta es correcta.
-            }
-        }
-    }
-}
+                junit '**/results/*.xml' // Asegúrate de que esta ruta es cor
