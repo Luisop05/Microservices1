@@ -6,7 +6,7 @@ services:
     ports:
       - "8000:8000"
     networks:
-      - restaurant-net
+      - restaurante-net
     depends_on:
       - inventario-api
 
@@ -15,21 +15,22 @@ services:
     ports:
       - "8001:8001"
     networks:
-      - restaurant-net
+      - restaurante-net
 
   jenkins:
-    build: ./jenkins  # Esto tomará el Dockerfile desde la carpeta jenkins
+    build: ./jenkins
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
-      - jenkins_home:/var/jenkins_home
+      - inicio_jenkins:/var/jenkins_home
     networks:
-      - restaurant-net
+      - restaurante-net
 
 networks:
-  restaurant-net:
+  restaurante-net:
     driver: bridge
-    
+
 volumes:
-  jenkins_home:
+  inicio_jenkins:
+
