@@ -16,7 +16,7 @@ pipeline {
                             script {
                                 // Verificar si el archivo docker-compose.yml está en la raíz
                                 if (!fileExists('../docker-compose.yml')) {
-                                    error "docker-compose.yml no se encuentra en la raíz del repositorio."
+                                    error("docker-compose.yml no se encuentra en la raíz del repositorio.")
                                 }
                             }
                         }
@@ -28,7 +28,7 @@ pipeline {
                             script {
                                 // Verificar si el archivo docker-compose.yml está en la raíz
                                 if (!fileExists('../docker-compose.yml')) {
-                                    error "docker-compose.yml no se encuentra en la raíz del repositorio."
+                                    error("docker-compose.yml no se encuentra en la raíz del repositorio.")
                                 }
                             }
                         }
@@ -115,9 +115,6 @@ pipeline {
         stage('Declarative: Post Actions') {
             steps {
                 echo 'Pipeline finalizado.'
-                script {
-                    // Acción post-pipeline (si se requiere alguna adicional)
-                }
             }
         }
     }
@@ -134,4 +131,3 @@ pipeline {
         }
     }
 }
-
