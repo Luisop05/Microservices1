@@ -1,10 +1,7 @@
 pipeline {
     agent any
-    
-    environment {
-        // Si tienes alguna variable de entorno global, la puedes definir aquí.
-    }
 
+    // El bloque 'environment' está vacío, por lo que no es necesario incluirlo si no tienes variables globales
     stages {
         stage('Declarative: Checkout SCM') {
             steps {
